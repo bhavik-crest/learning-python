@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopMate – Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+</head>
+
+<body
+    class="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 to-white dark:from-slate-900 dark:to-slate-800">
+
+    <form class="w-full max-w-md space-y-6 rounded-2xl bg-white p-8 shadow-xl dark:bg-slate-900">
+        <h1 class="text-center text-2xl font-bold">Welcome Back</h1>
+
+        <!-- email -->
+        <div class="relative">
+            <input id="email" type="email" placeholder=" "
+                class="peer form-input w-full rounded-lg border-slate-300 pt-6 dark:bg-slate-800 dark:border-slate-700" />
+            <label for="email" class="form-label">Email</label>
+            <span class="hidden text-xs text-red-500 peer-invalid:block">Invalid email</span>
+        </div>
+
+        <!-- password -->
+        <div class="relative">
+            <input id="password" type="password" placeholder=" "
+                class="peer form-input w-full rounded-lg border-slate-300 pt-6 dark:bg-slate-800 dark:border-slate-700" />
+            <label for="password" class="form-label">Password</label>
+        </div>
+
+        <button class="w-full rounded-lg bg-indigo-600 py-3 font-semibold text-white transition hover:bg-indigo-700">
+            Login
+        </button>
+
+        <div class="flex items-center justify-center gap-4 text-xs uppercase text-slate-400">
+            <hr class="w-1/4 border-slate-200 dark:border-slate-700"><span>or</span>
+            <hr class="w-1/4 border-slate-200 dark:border-slate-700">
+        </div>
+
+        <button
+            class="flex w-full items-center justify-center gap-2 rounded-lg border py-3 font-medium transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800">
+            <img src="assets/google.svg" class="h-5 w-5" alt="" />
+            Continue with Google
+        </button>
+
+        <p class="text-center text-sm">No account? <a href="register.html"
+                class="text-indigo-600 hover:underline">Register</a></p>
+    </form>
+
+    <!-- floating‑label helpers -->
+    <style>
+        .form-label {
+            @apply absolute left-3 top-[18px] translate-y-0 text-sm text-slate-500 transition-all peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-base peer-focus:top-[10px] peer-focus:text-sm dark:text-slate-400;
+        }
+    </style>
+</body>
+
+</html>
