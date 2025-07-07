@@ -1,22 +1,24 @@
-import React from "react";
-
 const Modal = ({ open, onClose, title, children }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      {/* modal box */}
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-xl">
-        <div className="mb-1 flex items-center justify-between bg-blue-700 rounded-t-2xl p-2 text-white">
-          <h2 className="text-xl font-semibold">{title}</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+      {/* Modal Container */}
+      <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl animate-fade-in scale-100">
+        {/* Modal Header */}
+        <div className="flex items-center justify-between bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-2xl px-4 py-3">
+          <h2 className="text-lg sm:text-xl font-semibold text-white">{title}</h2>
           <button
             onClick={onClose}
-            className="rounded-full p-1 text-white p-2"
+            className="text-white text-xl font-bold hover:text-gray-200 transition"
+            aria-label="Close modal"
           >
             ✕
           </button>
         </div>
-        <div className="p-2">
+
+        {/* Modal Content */}
+        <div className="p-5 sm:p-6 overflow-y-auto max-h-[80vh] text-gray-800">
           {children}
         </div>
       </div>

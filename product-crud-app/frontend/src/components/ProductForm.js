@@ -54,6 +54,7 @@ const ProductForm = ({ selectedProduct, onSuccess }) => {
         placeholder="Product description"
         autoComplete="off"
         required
+        rows={5}
         className="w-full rounded-md border px-3 py-2"
       />
       <input

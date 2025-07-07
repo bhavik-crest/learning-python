@@ -74,135 +74,128 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
 
     // Render Page
     return (
-        <div className="overflow-x-auto">
-            <div className="flex justify-between items-center my-4">
+        <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 p-4 rounded-xl shadow-md">
+            {/* Top Controls */}
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                 {/* Per Page Dropdown */}
-                <div>
-                    <label className="text-sm mr-2 font-medium">Show per page:</label>
+                <div className="w-full md:w-auto flex items-center gap-2">
+                    <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Show per page:</label>
                     <select
-                    value={pageSize}
-                    onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPage(1); // Reset to first page when page size changes
-                    }}
-                    className="border border-gray-300 rounded px-2 py-1 text-sm"
+                        value={pageSize}
+                        onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                            setPage(1);
+                        }}
+                        className="w-full md:w-auto border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                     >
-                    {perPageList.map((size) => (
-                        <option key={size} value={size}>
-                        {size}
-                        </option>
-                    ))}
+                        {perPageList.map((size) => (
+                            <option key={size} value={size}>
+                                {size}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
                 {/* Search Bar */}
                 <div className="w-full md:w-80">
                     <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                        type="text"
+                        placeholder="Search products..."
+                        className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
                     />
                 </div>
             </div>
 
             {/* Product list table */}
-            <table className="w-full table-auto border border-gray-200 shadow-sm rounded-md text-sm text-gray-800 bg-white">
-                <thead className="bg-gray-100 text-gray-700 uppercase tracking-wider">
-                    <tr>
-                        {["#", "Name", "Description", "Price", 'Status', "Actions"].map((h) => (
-                            <th key={h} className="px-4 py-3 text-left font-semibold border border-gray-200">
-                                {h}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map((p) => (
-                        <tr
-                            key={p.id}
-                            className="hover:bg-gray-50 transition-colors border-t border-gray-100"
-                        >
-                            <td className="border border-gray-200 px-4 py-3">#PID7894561230{p.id}</td>
-                            <td className="border border-gray-200 px-4 py-3">{p.name}</td>
-                            <td
-                                className="border border-gray-200 px-4 py-3 max-w-xs truncate text-gray-700"
-                                title={p.description}
-                            >
-                                {p.description}
-                            </td>
-                            <td className="border border-gray-200 px-4 py-3 font-medium">
-                                ₹{p.price}
-                            </td>
-                            <td className="border border-gray-200 px-4 py-3 font-medium">
-                                <span
-                                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${p.is_available
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-red-100 text-red-800'
-                                        }`}
-                                >
-                                    <span
-                                        className={`h-2 w-2 rounded-full ${p.is_available ? 'bg-green-500' : 'bg-red-500'
-                                            }`}
-                                    ></span>
-                                    {p.is_available ? 'Available' : 'Unavailable'}
-                                </span>
-                            </td>
-                            <td className="px-4 py-3 flex gap-3 items-center">
-                                <button
-                                    onClick={() => onView(p)}
-                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-600 text-white hover:bg-gray-700"
-                                    title="View"
-                                >
-                                    <i className="fa fa-info text-xs"></i>
-                                </button>
-                                <button
-                                    onClick={() => onEdit(p)}
-                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700"
-                                    title="Edit"
-                                >
-                                    <i className="fa fa-edit text-xs"></i>
-                                </button>
-                                <button
-                                    onClick={() => remove(p.id)}
-                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white hover:bg-red-700"
-                                    title="Delete"
-                                >
-                                    <i className="fa fa-trash text-xs"></i>
-                                </button>
-                            </td>
+            <div className="w-full overflow-x-auto rounded-md shadow-sm">
+                <table className="min-w-full text-sm text-gray-800 bg-white rounded-md">
+                    <thead className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white uppercase tracking-wider">
+                        <tr>
+                            {["#", "Name", "Description", "Price", "Status", "Actions"].map((h) => (
+                                <th key={h} className="px-4 py-3 text-left font-semibold border border-indigo-200/40 whitespace-nowrap">
+                                    {h}
+                                </th>
+                            ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {products.map((p) => (
+                            <tr key={p.id} className="hover:bg-indigo-50 transition-colors border-t border-gray-100">
+                                <td className="border border-gray-200 px-4 py-3 whitespace-nowrap">#PID7894561230{p.id}</td>
+                                <td className="border border-gray-200 px-4 py-3">{p.name}</td>
+                                <td className="border border-gray-200 px-4 py-3 max-w-xs truncate text-gray-700" title={p.description}>
+                                    {p.description}
+                                </td>
+                                <td className="border border-gray-200 px-4 py-3 font-medium whitespace-nowrap">₹{p.price}</td>
+                                <td className="border border-gray-200 px-4 py-3 font-medium whitespace-nowrap">
+                                    <span
+                                        className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${p.is_available
+                                            ? "bg-green-100 text-green-800"
+                                            : "bg-red-100 text-red-800"
+                                            }`}
+                                    >
+                                        <span className={`h-2 w-2 rounded-full ${p.is_available ? "bg-green-500" : "bg-red-500"}`}></span>
+                                        {p.is_available ? "Available" : "Unavailable"}
+                                    </span>
+                                </td>
+                                <td className="px-4 py-3 flex gap-2 items-center justify-start flex-wrap">
+                                    <button
+                                        onClick={() => onView(p)}
+                                        className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-gray-600 to-gray-800 text-white hover:brightness-110"
+                                        title="View"
+                                    >
+                                        <i className="fa fa-info text-xs"></i>
+                                    </button>
+                                    <button
+                                        onClick={() => onEdit(p)}
+                                        className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white hover:brightness-110"
+                                        title="Edit"
+                                    >
+                                        <i className="fa fa-edit text-xs"></i>
+                                    </button>
+                                    <button
+                                        onClick={() => remove(p.id)}
+                                        className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-red-700 text-white hover:brightness-110"
+                                        title="Delete"
+                                    >
+                                        <i className="fa fa-trash text-xs"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-            <div className="flex justify-between items-center mt-4">
-                {/* Per Page Dropdown */}
-                <div>
-                    <label className="text-sm mr-2 font-medium">Show per page:</label>
+            {/* Bottom Controls */}
+            <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-4">
+                {/* Per Page Dropdown (bottom) */}
+                <div className="w-full md:w-auto flex items-center gap-2">
+                    <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Show per page:</label>
                     <select
-                    value={pageSize}
-                    onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPage(1); // Reset to first page when page size changes
-                    }}
-                    className="border border-gray-300 rounded px-2 py-1 text-sm"
+                        value={pageSize}
+                        onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                            setPage(1);
+                        }}
+                        className="w-full md:w-auto border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                     >
-                    {perPageList.map((size) => (
-                        <option key={size} value={size}>
-                        {size}
-                        </option>
-                    ))}
+                        {perPageList.map((size) => (
+                            <option key={size} value={size}>
+                                {size}
+                            </option>
+                        ))}
                     </select>
                 </div>
 
-                {/* Pagination Bar */}
-                <nav className="mt-4 flex items-center justify-center gap-2 select-none">
+                {/* Pagination */}
+                <nav className="flex flex-wrap items-center justify-center gap-2 select-none">
                     <button
                         disabled={page === 1}
                         onClick={() => setPage(page - 1)}
-                        className={`px-3 py-1 rounded-md border ${page === 1
+                        className={`px-3 py-1 rounded-md text-sm font-medium border ${page === 1
                             ? "cursor-not-allowed bg-gray-200 text-gray-500"
-                            : "bg-white hover:bg-gray-100"
+                            : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:brightness-110"
                             }`}
                     >
                         Prev
@@ -214,8 +207,8 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                             <button
                                 key={n}
                                 onClick={() => setPage(n)}
-                                className={`px-3 py-1 rounded-md border ${n === page
-                                    ? "bg-blue-600 text-white"
+                                className={`px-3 py-1 rounded-md text-sm font-medium border ${n === page
+                                    ? "bg-indigo-600 text-white"
                                     : "bg-white hover:bg-gray-100"
                                     }`}
                             >
@@ -227,9 +220,9 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                     <button
                         disabled={page === pages}
                         onClick={() => setPage(page + 1)}
-                        className={`px-3 py-1 rounded-md border ${page === pages
+                        className={`px-3 py-1 rounded-md text-sm font-medium border ${page === pages
                             ? "cursor-not-allowed bg-gray-200 text-gray-500"
-                            : "bg-white hover:bg-gray-100"
+                            : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:brightness-110"
                             }`}
                     >
                         Next
@@ -237,6 +230,7 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                 </nav>
             </div>
         </div>
+
     );
 
 };
