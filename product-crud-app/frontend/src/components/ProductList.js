@@ -67,7 +67,7 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
             <table className="w-full table-auto border border-gray-200 shadow-sm rounded-md text-sm text-gray-800 bg-white">
                 <thead className="bg-gray-100 text-gray-700 uppercase tracking-wider">
                     <tr>
-                        {["#", "Name", "Description", "Price", "Actions"].map((h) => (
+                        {["#", "Name", "Description", "Price", 'Status', "Actions"].map((h) => (
                             <th key={h} className="px-4 py-3 text-left font-semibold border border-gray-200">
                                 {h}
                             </th>
@@ -90,6 +90,20 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                             </td>
                             <td className="border border-gray-200 px-4 py-3 font-medium">
                                 ₹{p.price}
+                            </td>
+                            <td className="border border-gray-200 px-4 py-3 font-medium">
+                                <span
+                                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${p.is_available
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800'
+                                        }`}
+                                >
+                                    <span
+                                        className={`h-2 w-2 rounded-full ${p.is_available ? 'bg-green-500' : 'bg-red-500'
+                                            }`}
+                                    ></span>
+                                    {p.is_available ? 'Available' : 'Unavailable'}
+                                </span>
                             </td>
                             <td className="px-4 py-3 flex gap-3 items-center">
                                 <button

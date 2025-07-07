@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from database import Base
 
 class Product(Base):
@@ -8,3 +8,5 @@ class Product(Base):
     name = Column(String)
     description = Column(String)
     price = Column(Integer)
+    image_url = Column(String, nullable=True)
+    is_available = Column(Boolean, default=True)

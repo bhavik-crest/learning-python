@@ -5,6 +5,22 @@ const ProductDetails = ({ product }) => {
     <div className="rounded-lg bg-white p-2 space-y-4">
       <div className="space-y-3">
         <div>
+          {/* <h3 className="text-sm font-medium text-gray-600">Status</h3> */}
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold ${product.is_available
+              ? 'bg-green-100 text-green-800'
+              : 'bg-red-100 text-red-800'
+              }`}
+          >
+            <span
+              className={`h-2 w-2 rounded-full ${product.is_available ? 'bg-green-500' : 'bg-red-500'
+                }`}
+            ></span>
+            {product.is_available ? 'Available' : 'Unavailable'}
+          </span>
+        </div>
+        
+        <div>
           <h3 className="text-sm font-medium text-gray-600">Name</h3>
           <p className="text-base text-gray-800">{product.name}</p>
         </div>
