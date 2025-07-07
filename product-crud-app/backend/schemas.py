@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
+from math import ceil
+from typing import Optional, List
 
 class ProductBase(BaseModel):
     name: str
@@ -13,6 +14,17 @@ class ProductCreate(ProductBase):
 
 class Product(ProductBase):
     id: int
+    name: str
+    description: str
+    price: int
+    is_available: bool
 
     class Config:
         orm_mode = True
+
+class PaginatedProducts(BaseModel):
+    total: int          # total rows in table
+    page: int           # current page (1‑based)
+    limit: int          # page size
+    pages: int          # total pages
+    items: List[Product]

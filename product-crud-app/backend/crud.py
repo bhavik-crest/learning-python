@@ -2,8 +2,12 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 import models, schemas
 
+# count products
+def count_products(db: Session) -> int:
+    return db.query(models.Product).count()
+
 # Get products with pagination
-def get_products(db: Session, skip: int = 0, limit: int = 100):
+def get_products(db: Session, skip: int, limit: int):
     return db.query(models.Product).order_by(models.Product.id.desc()).offset(skip).limit(limit).all()
 
 # Get product by ID

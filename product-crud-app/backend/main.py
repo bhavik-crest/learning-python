@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 import models, schemas, crud
 from database import SessionLocal, engine, Base
 from fastapi.middleware.cors import CORSMiddleware
+from math import ceil
 
 Base.metadata.create_all(bind=engine)
 
@@ -23,9 +24,17 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/products", response_model=list[schemas.Product])
-def list_products(db: Session = Depends(get_db)):
-    return crud.get_products(db)
+@app.get("/products", response_model=schemas.PaginatedProducts)
+def list_products(
+    page: int = Query(1, ge=1),
+    limit: int = Query(10, ge=1, le=100),
+    db: Session = Depends(get_db),
+):
+    total = crud.count_products(db)
+    skip  = (page - 1) * limit
+    items = crud.get_products(db, skip=skip, limit=limit)
+    pages = ceil(total / limit) if total else 1
+    return {"total": total, "page": page, "limit": limit, "pages": pages, "items": items}
 
 @app.get("/products/{product_id}", response_model=schemas.Product)
 def get_product(product_id: int, db: Session = Depends(get_db)):
