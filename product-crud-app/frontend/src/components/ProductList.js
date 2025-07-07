@@ -1,17 +1,21 @@
-import React, { use, useEffect, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { fetchProducts, deleteProduct } from "../api";
 import Swal from 'sweetalert2';
 import toast from 'react-hot-toast';
 
 const ProductList = ({ onEdit, onView, refreshKey }) => {
+
+    // Static array
+    const perPageList = [5, 10, 15, 20, 25, 30, 50]; // Per page
+    const tableHeader = ["#", "Name", "Description", "Price", "Status", "Actions"]; // Table header
+
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [pageSize, setPageSize] = useState(5); // Default page size
+    const [pageSize, setPageSize] = useState(10); // Default page size
     const [page, setPage] = useState(1);
     const [pages, setPages] = useState(1); // total pages
-    const perPageList = [5, 10, 15, 20, 25, 30, 50];
-    const tableHeader = ["#", "Name", "Description", "Price", "Status", "Actions"];
     const [search, setSearch] = useState("");
+    const inputRef = useRef(null);
 
 
     // Display Data
@@ -30,23 +34,17 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
     // Update list on page, pageSize, refreshKey value change
     useEffect(() => { load(); }, [refreshKey]);
 
+    // Manage set timeout when searching or pagination
     useEffect(() => {
+        setLoading(true);
         const timeout = setTimeout(() => load(), 400);
         return () => clearTimeout(timeout);
     }, [search, page, pageSize]);
 
-    // Show loader
-    if (loading)
-        return (
-            <div className="flex flex-col items-center justify-center h-40 space-y-2">
-                <div className="flex space-x-2">
-                    <div className="h-3 w-3 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.3s]"></div>
-                    <div className="h-3 w-3 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.15s]"></div>
-                    <div className="h-3 w-3 rounded-full bg-blue-500 animate-bounce"></div>
-                </div>
-                <p className="text-sm text-gray-600">Loading products...</p>
-            </div>
-        );
+    // Manage search box auto focus
+    useEffect(() => {
+        if (!loading) inputRef.current?.focus();
+    }, [loading]);
 
     // Delete product based on product id
     const remove = async (id) => {
@@ -77,6 +75,36 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
         }
     };
 
+    // Manage page number with ellipsis(.....)
+    const getPageList = (page, pages) => {
+        const visible = new Set();
+
+        // First 3 pages
+        for (let i = 1; i <= Math.min(3, pages); i++) visible.add(i);
+
+        // Current page ±1
+        for (let i = page - 1; i <= page + 1; i++) {
+            if (i > 0 && i <= pages) visible.add(i);
+        }
+
+        // Last 3 pages
+        for (let i = Math.max(1, pages - 2); i <= pages; i++) visible.add(i);
+
+        // Convert to sorted array
+        const sorted = [...visible].sort((a, b) => a - b);
+
+        // Insert ellipsis tokens
+        const result = [];
+        for (let i = 0; i < sorted.length; i++) {
+            result.push(sorted[i]);
+            if (i < sorted.length - 1 && sorted[i + 1] !== sorted[i] + 1) {
+                result.push("ellipsis");
+            }
+        }
+
+        return result;
+    };
+
     // Render Page
     return (
         <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 p-4 rounded-xl shadow-md">
@@ -102,18 +130,36 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                 </div>
 
                 {/* Search Bar */}
-                <div className="w-full md:w-80">
+                <div className="w-full md:w-80 relative">
+                    {/* Search Input */}
                     <input
                         type="text"
+                        ref={inputRef}
                         value={search}
                         placeholder="Search products..."
                         onChange={(e) => {
                             setSearch(e.target.value);
-                            setPage(1); // reset to first page on search
+                            setPage(1);
                         }}
-                        className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
+                        className="w-full border border-gray-300 rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
                     />
+
+                    {/* Clear Icon inside input */}
+                    {search && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSearch("");
+                                setPage(1);
+                                inputRef.current?.focus();
+                            }}
+                            className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                        >
+                            ✕
+                        </button>
+                    )}
                 </div>
+
             </div>
 
             {/* Product list table */}
@@ -129,7 +175,7 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {!products.length && (
+                        {!loading && !products.length && (
                             <tr>
                                 <td colSpan={6} className="px-4 py-5 text-center text-gray-600 font-medium">
                                     No product found.
@@ -137,7 +183,23 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                             </tr>
                         )}
 
-                        {products.length > 0 && products.map((p) => (
+                        {loading && (
+                            <tr>
+                                <td colSpan={6} className="px-4 py-5 text-center text-gray-600 font-medium">
+                                    <div className="flex flex-col items-center justify-center h-20 space-y-2">
+                                        <div className="flex space-x-2">
+                                            <div className="h-3 w-3 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.3s]"></div>
+                                            <div className="h-3 w-3 rounded-full bg-blue-500 animate-bounce [animation-delay:-0.15s]"></div>
+                                            <div className="h-3 w-3 rounded-full bg-blue-500 animate-bounce"></div>
+                                        </div>
+                                        <p className="text-sm text-gray-600">Loading products...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        )}
+
+
+                        {!loading && products.length > 0 && products.map((p) => (
                             <tr key={p.id} className="hover:bg-indigo-50 transition-colors border-t border-gray-100">
                                 <td className="border border-gray-200 px-4 py-3 whitespace-nowrap">#PID7894561230{p.id}</td>
                                 <td className="border border-gray-200 px-4 py-3">{p.name}</td>
@@ -220,21 +282,24 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                             Prev
                         </button>
 
-                        {[...Array(pages)].map((_, i) => {
-                            const n = i + 1;
-                            return (
+                        {getPageList(page, pages).map((item, idx) =>
+                            item === "ellipsis" ? (
+                                <span key={`ellipsis-${idx}`} className="px-2 text-gray-500 select-none">
+                                    …
+                                </span>
+                            ) : (
                                 <button
-                                    key={n}
-                                    onClick={() => setPage(n)}
-                                    className={`px-3 py-1 rounded-md text-sm font-medium border ${n === page
+                                    key={item}
+                                    onClick={() => setPage(item)}
+                                    className={`px-3 py-1 rounded-md text-sm font-medium border ${item === page
                                         ? "bg-indigo-600 text-white"
                                         : "bg-white hover:bg-gray-100"
                                         }`}
                                 >
-                                    {n}
+                                    {item}
                                 </button>
-                            );
-                        })}
+                            )
+                        )}
 
                         <button
                             disabled={page === pages}
@@ -250,9 +315,7 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                 )}
             </div>
         </div>
-
     );
-
 };
 
 export default ProductList;

@@ -2,8 +2,8 @@ const ProductDetails = ({ product }) => {
   if (!product) return null;
 
   return (
-    <div className="rounded-lg bg-white p-2 space-y-4">
-      <div className="space-y-3">
+    <div className="rounded-lg bg-white">
+      <div className="space-y-4">
         <div>
           {/* <h3 className="text-sm font-medium text-gray-600">Status</h3> */}
           <span
