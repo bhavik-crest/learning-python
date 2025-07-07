@@ -9,13 +9,16 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
     const [pageSize, setPageSize] = useState(5); // Default page size
     const [page, setPage] = useState(1);
     const [pages, setPages] = useState(1); // total pages
-    const [perPageList, setPerPageList] = useState([5, 10, 15, 20, 25, 30, 50]);
+    const perPageList = [5, 10, 15, 20, 25, 30, 50];
+    const tableHeader = ["#", "Name", "Description", "Price", "Status", "Actions"];
+    const [search, setSearch] = useState("");
+
 
     // Display Data
-    const load = async (p = page, size = pageSize) => {
+    const load = async (p = page, size = pageSize, term = search) => {
         setLoading(true);
         try {
-            const res = await fetchProducts(p, size);
+            const res = await fetchProducts(p, size, term);
             setProducts(res.data.items);
             setPages(res.data.pages);
             setPage(res.data.page);
@@ -25,7 +28,12 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
     };
 
     // Update list on page, pageSize, refreshKey value change
-    useEffect(() => { load(); }, [page, pageSize, refreshKey]);
+    useEffect(() => { load(); }, [refreshKey]);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => load(), 400);
+        return () => clearTimeout(timeout);
+    }, [search, page, pageSize]);
 
     // Show loader
     if (loading)
@@ -39,9 +47,6 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                 <p className="text-sm text-gray-600">Loading products...</p>
             </div>
         );
-
-    // Show no data message when data list is empty or null
-    if (!products.length) return <p>No products yet.</p>;
 
     // Delete product based on product id
     const remove = async (id) => {
@@ -100,7 +105,12 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                 <div className="w-full md:w-80">
                     <input
                         type="text"
+                        value={search}
                         placeholder="Search products..."
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setPage(1); // reset to first page on search
+                        }}
                         className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 shadow-sm"
                     />
                 </div>
@@ -111,7 +121,7 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                 <table className="min-w-full text-sm text-gray-800 bg-white rounded-md">
                     <thead className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white uppercase tracking-wider">
                         <tr>
-                            {["#", "Name", "Description", "Price", "Status", "Actions"].map((h) => (
+                            {tableHeader.map((h) => (
                                 <th key={h} className="px-4 py-3 text-left font-semibold border border-indigo-200/40 whitespace-nowrap">
                                     {h}
                                 </th>
@@ -119,7 +129,15 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {products.map((p) => (
+                        {!products.length && (
+                            <tr>
+                                <td colSpan={6} className="px-4 py-5 text-center text-gray-600 font-medium">
+                                    No product found.
+                                </td>
+                            </tr>
+                        )}
+
+                        {products.length > 0 && products.map((p) => (
                             <tr key={p.id} className="hover:bg-indigo-50 transition-colors border-t border-gray-100">
                                 <td className="border border-gray-200 px-4 py-3 whitespace-nowrap">#PID7894561230{p.id}</td>
                                 <td className="border border-gray-200 px-4 py-3">{p.name}</td>
@@ -189,45 +207,47 @@ const ProductList = ({ onEdit, onView, refreshKey }) => {
                 </div>
 
                 {/* Pagination */}
-                <nav className="flex flex-wrap items-center justify-center gap-2 select-none">
-                    <button
-                        disabled={page === 1}
-                        onClick={() => setPage(page - 1)}
-                        className={`px-3 py-1 rounded-md text-sm font-medium border ${page === 1
-                            ? "cursor-not-allowed bg-gray-200 text-gray-500"
-                            : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:brightness-110"
-                            }`}
-                    >
-                        Prev
-                    </button>
+                {products.length > 0 && (
+                    <nav className="flex flex-wrap items-center justify-center gap-2 select-none" >
+                        <button
+                            disabled={page === 1}
+                            onClick={() => setPage(page - 1)}
+                            className={`px-3 py-1 rounded-md text-sm font-medium border ${page === 1
+                                ? "cursor-not-allowed bg-gray-200 text-gray-500"
+                                : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:brightness-110"
+                                }`}
+                        >
+                            Prev
+                        </button>
 
-                    {[...Array(pages)].map((_, i) => {
-                        const n = i + 1;
-                        return (
-                            <button
-                                key={n}
-                                onClick={() => setPage(n)}
-                                className={`px-3 py-1 rounded-md text-sm font-medium border ${n === page
-                                    ? "bg-indigo-600 text-white"
-                                    : "bg-white hover:bg-gray-100"
-                                    }`}
-                            >
-                                {n}
-                            </button>
-                        );
-                    })}
+                        {[...Array(pages)].map((_, i) => {
+                            const n = i + 1;
+                            return (
+                                <button
+                                    key={n}
+                                    onClick={() => setPage(n)}
+                                    className={`px-3 py-1 rounded-md text-sm font-medium border ${n === page
+                                        ? "bg-indigo-600 text-white"
+                                        : "bg-white hover:bg-gray-100"
+                                        }`}
+                                >
+                                    {n}
+                                </button>
+                            );
+                        })}
 
-                    <button
-                        disabled={page === pages}
-                        onClick={() => setPage(page + 1)}
-                        className={`px-3 py-1 rounded-md text-sm font-medium border ${page === pages
-                            ? "cursor-not-allowed bg-gray-200 text-gray-500"
-                            : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:brightness-110"
-                            }`}
-                    >
-                        Next
-                    </button>
-                </nav>
+                        <button
+                            disabled={page === pages}
+                            onClick={() => setPage(page + 1)}
+                            className={`px-3 py-1 rounded-md text-sm font-medium border ${page === pages
+                                ? "cursor-not-allowed bg-gray-200 text-gray-500"
+                                : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:brightness-110"
+                                }`}
+                        >
+                            Next
+                        </button>
+                    </nav>
+                )}
             </div>
         </div>
 

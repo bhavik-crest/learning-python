@@ -1,14 +1,30 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from fastapi import HTTPException, status
 import models, schemas
 
+# helper so we don’t repeat the same “apply search” code twice
+def _filtered_query(db: Session, search: str | None = None):
+    q = db.query(models.Product)
+    if search:
+        pattern = f"%{search}%"
+        # Search in name OR description
+        q = q.filter(
+            or_(
+                models.Product.name.ilike(pattern),
+                models.Product.description.ilike(pattern),
+                models.Product.price.ilike(pattern),
+            )
+        )
+    return q
+
 # count products
-def count_products(db: Session) -> int:
-    return db.query(models.Product).count()
+def count_products(db: Session, search: str | None = None) -> int:
+    return _filtered_query(db, search).count()
 
 # Get products with pagination
-def get_products(db: Session, skip: int, limit: int):
-    return db.query(models.Product).order_by(models.Product.id.desc()).offset(skip).limit(limit).all()
+def get_products(db: Session, skip: int, limit: int, search: str | None = None):
+    return _filtered_query(db, search).order_by(models.Product.id.desc()).offset(skip).limit(limit).all()
 
 # Get product by ID
 def get_product(db: Session, product_id: int):

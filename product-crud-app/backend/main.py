@@ -28,13 +28,28 @@ def get_db():
 def list_products(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
+    search: str = Query("", max_length=100),
     db: Session = Depends(get_db),
 ):
-    total = crud.count_products(db)
+    # 1. Count *after* search is applied
+    total = crud.count_products(db, search)
+
+    # 2. Calculate pagination
+    pages = max(ceil(total / limit), 1)
+    page  = min(page, pages) 
     skip  = (page - 1) * limit
-    items = crud.get_products(db, skip=skip, limit=limit)
-    pages = ceil(total / limit) if total else 1
-    return {"total": total, "page": page, "limit": limit, "pages": pages, "items": items}
+
+    # 3. Fetch the slice
+    items = crud.get_products(db, skip=skip, limit=limit, search=search)
+
+    # 4. Return metadata + items
+    return {
+        "total": total,
+        "page":  page,
+        "limit": limit,
+        "pages": pages,
+        "items": items,
+    }
 
 @app.get("/products/{product_id}", response_model=schemas.Product)
 def get_product(product_id: int, db: Session = Depends(get_db)):
