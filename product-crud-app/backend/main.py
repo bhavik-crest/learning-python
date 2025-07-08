@@ -1,8 +1,12 @@
 from fastapi import FastAPI
-from routes import products
+from core.database import Base, engine
+from routes import products, auth
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Create all tables
+Base.metadata.create_all(bind=engine)
 
 # CORS: Allow frontend requests
 app.add_middleware(
@@ -15,3 +19,4 @@ app.add_middleware(
 
 # Include product routes
 app.include_router(products.router, prefix="/api/products", tags=["Products"])
+app.include_router(auth.router, prefix="/api/auth")

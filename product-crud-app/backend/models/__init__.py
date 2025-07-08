@@ -1,0 +1,1 @@
+from models.user import User  # ensures User is registered in metadata
