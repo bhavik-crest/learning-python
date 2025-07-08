@@ -1,10 +1,11 @@
 import { Navigate } from "react-router-dom";
+import { isTokenValid } from "../utils/auth";
 
 function PrivateRoute({ children }) {
-  const token = localStorage.getItem("token");
+  const isAuthenticated = isTokenValid();
 
-  // You could add token validation (expiration check) here
-  if (!token) {
+  if (!isAuthenticated) {
+    localStorage.removeItem("token");
     return <Navigate to="/login" replace />;
   }
 

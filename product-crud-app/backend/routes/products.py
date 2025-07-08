@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from math import ceil
+from core.security import get_current_user
 
 from core.database import get_db
 from schemas.product import (
@@ -19,7 +20,7 @@ router = APIRouter()
 def list_products(
     page: int = Query(1, ge=1),
     limit: int = Query(10, ge=1, le=100),
-    search: str = Query("", max_length=100),
+    search: str = Query(""),
     db: Session = Depends(get_db),
 ):
     total = crud_product.count_products(db, search)

@@ -1,10 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import toast from 'react-hot-toast';
+import axios from "axios";
 
 function Navbar() {
     const location = useLocation();
     const navigate = useNavigate();
+    const [isScrolled, setIsScrolled] = useState(false);
+
     const token = localStorage.getItem("token");
 
     const [email, setEmail] = useState("");
@@ -19,9 +23,28 @@ function Navbar() {
                 setEmail("");
             }
         }
-    }, [token]);
 
-    const handleLogout = () => {
+        // Onscroll manage nav bar background
+        const onScroll = () => {
+            setIsScrolled(window.scrollY > 10);
+        };
+
+        window.addEventListener("scroll", onScroll);
+        return () => window.removeEventListener("scroll", onScroll);
+    }, [token, isScrolled]);
+
+    const handleLogout = async () => {
+        try {
+            await axios.post("http://127.0.0.1:8000/api/auth/logout", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+        } catch (error) {
+            toast.error("Logout failed:", error.response?.data || error.message);
+        }
+
         localStorage.removeItem("token");
         navigate("/login");
     };
@@ -32,7 +55,11 @@ function Navbar() {
     }
 
     return (
-        <nav className="bg-white shadow-md px-6 py-3 flex items-center justify-between">
+        <nav
+            className={`shadow-md sticky top-0 z-50 px-6 py-3 flex items-center justify-between backdrop-blur-md transition-colors duration-300 ${
+                isScrolled ? "bg-white/70" : "bg-white/30"
+            }`}
+        >
             <div
                 className="text-xl font-bold cursor-pointer"
                 onClick={() => navigate("/")}
