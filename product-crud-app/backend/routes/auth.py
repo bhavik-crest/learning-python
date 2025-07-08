@@ -30,5 +30,5 @@ def login(
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    token = create_access_token({"sub": user.email})
+    token = create_access_token(data={"sub": user.id, "email": user.email})
     return {"access_token": token, "token_type": "bearer", "user": user}

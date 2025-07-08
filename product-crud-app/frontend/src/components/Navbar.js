@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-//import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 function Navbar() {
     const location = useLocation();
@@ -13,8 +13,8 @@ function Navbar() {
     useEffect(() => {
         if (token) {
             try {
-                //const decoded = jwtDecode(token);
-                setEmail('test' || "");
+                const decoded = jwtDecode(token);
+                setEmail(decoded.email || "");
             } catch {
                 setEmail("");
             }
