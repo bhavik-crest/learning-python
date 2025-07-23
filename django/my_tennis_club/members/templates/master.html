@@ -1,3 +1,4 @@
+{% comment %} {# Django will ignore everything until {% endcomment %} #}
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -7,13 +8,47 @@
 </head>
 <body>
 
-<div class="topnav">
-  <a href="/">HOME</a> |
-  <a href="/members">MEMBERS</a>
-</div>
+  <div class="topnav">
+    <a href="/">HOME</a> |
+    <a href="/members">MEMBERS</a>
+  </div>
 
-{% block content %}
-{% endblock %}
+  {% block content %}{% endblock %}
+</body>
 
+</html>
+{% endcomment %}
+
+
+<!-- Bootstrap5 UI start -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>{% block title %}{% endblock %}</title>
+  {% load bootstrap5 %}
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}</title>
+  {% block css %}{% endblock %}
+</head>
+
+<body>
+
+  <div class="container-fluid">
+    <ul class="nav bg-primary mb-4">
+      <li class="nav-item">
+        <a class="nav-link link-light" href="/">HOME</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link link-light" href="/members">MEMBERS</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="container">
+    {% block content %}
+    {% endblock %}
+  </div>
 </body>
 </html>
+<!-- Bootstrap5 UI end -->

@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'members'
+    'members',
+    'bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -69,10 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'my_tennis_club.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',         # ✅ Use MySQL engine
@@ -84,6 +81,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',         # ✅ Use postgresql engine
+#         'NAME': 'db_django',
+#         'USER': 'postgres',
+#         'PASSWORD': 'test@123',
+#         'HOST': '127.0.0.1',                          # or IP address
+#         'PORT': '5432',                               # default postgresql port
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

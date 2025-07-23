@@ -98,7 +98,8 @@ def members(request):
   #######################################################################################################################################
 
   #Main
-  mymembers = Member.objects.all().values()
+  #mymembers = Member.objects.all().values()
+  mymembers = Member.objects.all().order_by('-id').values()
   template = loader.get_template('all_members.html')
   context = {
     'mymembers': mymembers,

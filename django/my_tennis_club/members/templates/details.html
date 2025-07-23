@@ -1,13 +1,16 @@
 {% extends "master.html" %}
 
 {% block title %}
-  Details about {{ mymember.firstname }} {{ mymember.lastname }}
+Details about {{ mymember.firstname }} {{ mymember.lastname }}
 {% endblock %}
 
 {% block content %}
-  <div class="mycard">
-    <h1>{{ mymember.firstname }} {{ mymember.lastname }}</h1>
-    <p>Phone : {{ mymember.phone }}</p>
-    <p>Member since : {{ mymember.joined_date }}</p>
-  </div>
-{% endblock %}  
+<h3 class="mt-3"> <a href="/members" class="text-decoration-none">←</a></h3>
+<div class="mycard border p-2 mb-5 bg-light rounded mt-3 text-center">
+  <p>#{{ mymember.id }}</p>
+  <h3 class="mt-3 mb-3">{{ mymember.firstname }} {{ mymember.lastname }}</h3>
+  <p>Phone : {{ mymember.phone }}</p>
+  <p>Member since : {{ mymember.joined_date }}</p>
+  <p>Slug : {{ mymember.slug }}</p>
+</div>
+{% endblock %}

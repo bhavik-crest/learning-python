@@ -1,17 +1,58 @@
 {% extends "master.html" %}
 
 {% block title %}
-  My Tennis Club - List of all members
+My Tennis Club - List of all members
 {% endblock %}
 
+{% block css %}
+<style>
+  ul.custom-emoji-list li::marker {
+    /* content: "👉 " !important; */
+    content: "✅ " !important;
+    /* content: "🌟 " !important; */
+    /* content: "🎯 " !important; */
+    /* content: "🚀 " !important; */
+  }
+  
+  .cursor-pointer {
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-  <div class="mycard">
-    <h1>Members</h1>
-    <ul>
+<div class="mycard">
+  <h3>Members</h3>
+  <table class="table table-bordered mt-4">
+    <thead>
+      <tr>
+        <!-- <th scope="col">#</th> -->
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Joined Date</th>
+      </tr>
+    </thead>
+    <tbody>
       {% for x in mymembers %}
-        <li onclick="window.location = 'details/{{ x.slug }}'">{{ x.firstname }} {{ x.lastname }}</li>
+      <tr onclick="window.location = 'details/{{ x.slug }}'" class="cursor-pointer">
+          <!-- <th scope="row">{{ x.id }}</th> -->
+          <td>{{ x.firstname }}</td>
+          <td>{{ x.lastname }}</td>
+          <td>{{ x.phone }}</td>
+          <td>{{ x.joined_date }}</td>
+      </tr>
       {% endfor %}
-    </ul>
-  </div>
+    </tbody>
+  </table>
+
+  <!-- <ul class="my-3 custom-emoji-list">
+    {% for x in mymembers %}
+    <li class="bg-light p-2 my-2 rounded fw-bold" onclick="window.location = 'details/{{ x.slug }}'"
+      style="cursor: pointer;">
+      {{ x.firstname }} {{ x.lastname }}
+    </li>
+    {% endfor %}
+  </ul> -->
+</div>
 {% endblock %}
