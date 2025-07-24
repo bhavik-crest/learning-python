@@ -1,7 +1,11 @@
 from django.http import HttpResponse
 from django.template import loader
-from .models import Member
+from .models import Member, MemberForm
 from django.db.models import Q
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils.text import slugify
+from django.contrib import messages
+from django.db import IntegrityError
 
 def main(request):
   template = loader.get_template('main.html')
@@ -117,3 +121,60 @@ def details(request, slug):
   except Member.DoesNotExist:
       template = loader.get_template('404.html')
       return HttpResponse(template.render())
+  
+def add_member_form(request, member_id=None, pk=None):
+    instance = None
+    if pk:
+        instance = get_object_or_404(Member, pk=pk)
+
+
+    if member_id:
+        member = get_object_or_404(Member, pk=member_id)
+    else:
+        member = None
+
+    if request.method == 'POST':
+        form = MemberForm(request.POST, instance=member)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            # Generate slug if new or if name has changed
+            if not obj.slug or (member and (obj.firstname != member.firstname or obj.lastname != member.lastname)):
+                obj.slug = generate_unique_slug(obj.firstname, obj.lastname, instance=member)
+            # Save the object
+            obj.save()
+            if pk:
+                messages.success(request, 'Member updated successfully.')
+            else:
+                messages.success(request, 'Member added successfully.')
+            return redirect('members')
+    else:
+        form = MemberForm(instance=member)
+
+    return render(request, 'add_member.html', {
+        'form': form,
+        'member': member
+    })
+
+def delete_member(request, member_id):
+    try:
+        member = get_object_or_404(Member, pk=member_id)
+        member.delete()
+        messages.success(request, 'Member deleted successfully.')
+    except IntegrityError:
+        messages.error(request, 'Cannot delete this member due to related records.')
+    except Exception as e:
+        messages.error(request, f'Error deleting member : {str(e)}')
+
+    return redirect('members')
+
+def generate_unique_slug(firstname, lastname, instance=None):
+  base_slug = slugify(f"{firstname}-{lastname}")
+  slug = base_slug
+  counter = 1
+
+  # Filter existing slugs excluding the current instance
+  while Member.objects.filter(slug=slug).exclude(pk=instance.pk if instance and instance.pk else None).exists():
+      slug = f"{base_slug}-{counter}"
+      counter += 1
+
+  return slug

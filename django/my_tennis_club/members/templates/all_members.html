@@ -13,7 +13,7 @@ My Tennis Club - List of all members
     /* content: "🎯 " !important; */
     /* content: "🚀 " !important; */
   }
-  
+
   .cursor-pointer {
     cursor: pointer;
   }
@@ -22,25 +22,52 @@ My Tennis Club - List of all members
 
 {% block content %}
 <div class="mycard">
-  <h3>Members</h3>
+  {% if messages %}
+  {% for message in messages %}
+  <div class="alert 
+        {% if message.tags == 'error' %}
+          alert-danger
+        {% elif message.tags %}
+          alert-{{ message.tags }}
+        {% else %}
+          alert-info
+        {% endif %}
+        alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  <div class="d-flex justify-content-between align-items-center">
+    <h3>Members</h3>
+    <a href="/members/add" class="btn btn-success">Add Member</a>
+  </div>
   <table class="table table-bordered mt-4">
     <thead>
       <tr>
-        <!-- <th scope="col">#</th> -->
         <th scope="col">First Name</th>
         <th scope="col">Last Name</th>
         <th scope="col">Phone</th>
         <th scope="col">Joined Date</th>
+        <th scope="col">Action</th>
       </tr>
     </thead>
     <tbody>
       {% for x in mymembers %}
-      <tr onclick="window.location = 'details/{{ x.slug }}'" class="cursor-pointer">
-          <!-- <th scope="row">{{ x.id }}</th> -->
-          <td>{{ x.firstname }}</td>
-          <td>{{ x.lastname }}</td>
-          <td>{{ x.phone }}</td>
-          <td>{{ x.joined_date }}</td>
+      <tr>
+        <td>{{ x.firstname }}</td>
+        <td>{{ x.lastname }}</td>
+        <td>{{ x.phone }}</td>
+        <td>{{ x.joined_date }}</td>
+        <td>
+          <a class="me-1 btn btn-info btn-sm text-white rounded-pill" href="{% url 'details' x.slug %}"><i
+              class="fa fa-info-circle"></i></a>
+          <a class="me-1 btn btn-primary btn-sm text-white rounded-pill" href="{% url 'edit_member' x.id %}"><i
+              class="fa fa-edit"></i></a>
+          <a class="me-1 btn btn-danger btn-sm text-white rounded-pill" href="{% url 'delete_member' x.id %}"
+            onclick="return confirm('Are you sure you want to delete this member?');"><i class="fa fa-trash"></i></a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>

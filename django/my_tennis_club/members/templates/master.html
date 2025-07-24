@@ -2,10 +2,12 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
+
 <head>
   <link rel="stylesheet" href="{% static 'mystyles.css' %}">
   <title>{% block title %}{% endblock %}</title>
 </head>
+
 <body>
 
   <div class="topnav">
@@ -28,6 +30,7 @@
   <title>{% block title %}{% endblock %}</title>
   {% load bootstrap5 %}
   {% bootstrap_css %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   {% bootstrap_javascript %}</title>
   {% block css %}{% endblock %}
 </head>
@@ -50,5 +53,8 @@
     {% endblock %}
   </div>
 </body>
+{% block script %}
+{% endblock %}
+
 </html>
 <!-- Bootstrap5 UI end -->
