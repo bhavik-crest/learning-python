@@ -1,0 +1,8 @@
+User: Hello
+Bot: Hi! How can I help you today?
+
+User: What is a Python list?
+Bot: A list is a collection of items in Python.
+
+User: How do I create a dictionary?
+Bot: You can create a dictionary using curly braces like {"key": "value"}.
