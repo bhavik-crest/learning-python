@@ -1,3 +1,0 @@
-Hello! This is a test of our text to speech project.
-We are using an open source free model to convert text into audio.
-It works completely offline and is very easy to use.
